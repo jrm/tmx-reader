@@ -1,0 +1,5 @@
+ldap:
+    server: server.com
+    port: 389
+    base: DC=DOMAIN,DC=com
+    domain: domain.com

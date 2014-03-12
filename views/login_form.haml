@@ -1,0 +1,9 @@
+%form#login.login{"accept-charset" => "UTF-8", action: "/login", method: "post"}
+  %h2.form-signin-heading= app_name
+  %h5.form-signin-heading Log-in using Active Directory Account
+  %p
+    %input#user.input-block-level{autofocus: "autofocus", name: "user", placeholder: "Username", size: "30", type: "text"}
+  %p
+    %input#pass.input-block-level{name: "pass", placeholder: "Password", size: "30", type: "password"}
+  %p
+    %input.btn.btn-large.btn-primary{name: "commit", type: "submit", value: "Sign in"}

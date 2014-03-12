@@ -1,0 +1,49 @@
+.jumbotron
+  .row
+    .container
+      %table.table.table-borderd
+        %thead
+        %tbody
+          - @files.each do |file|
+            %tr
+              %td
+                %a{:href => "/#{file}"}= file
+    
+  .row
+    .container
+      .form-group
+        %form{:action => '/upload', :enctype => "multipart/form-data", :method => 'POST'}
+          %input.form-control{:name => "file", :type => "file"}
+          %input.btn.btn-primary{:type => "submit", :value => "Upload TMX"}
+
+.row
+  .container
+    - if @doc
+      .panel.panel-default
+        .panel-heading
+          %h1 Source Language: #{@src_lang}, Targets: #{@target_langs.join(',')}
+        .panel-body
+          %ul
+            - @headers.each do |prop|
+              %li #{prop["type"].split(":")[0].gsub("x-","")} : #{prop.text}
+        
+      %table.table.table-bordered#segments
+        %thead
+          %tr
+            %th Source Text
+            - @target_langs.each do |tl|
+              %th= tl
+              %th Created
+              %th Changed
+              %th Last Used
+              
+            
+        %tbody
+          - @tus.each do |tu|
+            %tr
+              %td= tu.xpath("./tuv[@xml:lang='#{@src_lang}']/seg").first.text
+              - @target_langs.each do |tl|
+                %td= tu.xpath("./tuv[@xml:lang='#{tl}']/seg").first.text
+              %td= Date.parse(tu[:creationdate])
+              %td= Date.parse(tu[:changedate])
+              %td= Date.parse(tu[:lastusagedate])
