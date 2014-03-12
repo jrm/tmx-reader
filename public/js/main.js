@@ -1,9 +1,20 @@
 $(function () {
   
-  $('#segments').dataTable({
-    "sDom": "<'row'<'col-xs-6'T><'col-xs-6'f>r>t<'row'<'col-xs-6'i><'col-xs-6'p>>"
-  });
+  $('#segments').dataTable();
   
   $('.audit-details').tooltip();
+  
+  $("#memories").on('click', '.delete-memory', function(e) { 
+	    if (confirm("Are you sure you want to delete " + $(this).data("id") + " ?" )) {
+	      var frm = $("<form>");
+        frm.attr({'action':$(this).attr('href'), 'method': 'post'});
+        frm.append('<input type="hidden" name="_method" value="delete" />');
+        frm.appendTo("body");
+        frm.submit();
+        e.preventDefault();
+      }
+      return false;
+  });  
+	
   
 });

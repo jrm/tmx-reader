@@ -1,49 +1,72 @@
-.jumbotron
-  .row
+- unless @tmx
+  .jumbotron
     .container
-      %table.table.table-borderd
-        %thead
-        %tbody
-          - @files.each do |file|
-            %tr
-              %td
-                %a{:href => "/#{file}"}= file
-    
-  .row
-    .container
-      .form-group
-        %form{:action => '/upload', :enctype => "multipart/form-data", :method => 'POST'}
-          %input.form-control{:name => "file", :type => "file"}
-          %input.btn.btn-primary{:type => "submit", :value => "Upload TMX"}
+      .row
+        .container
+          %form{:action => '/upload', :enctype => "multipart/form-data", :method => 'POST'}
+            %input.form-control{:name => "file", :type => "file"}
+            %input.btn.btn-primary{:type => "submit", :value => "Upload TMX"}
 
-.row
-  .container
-    - if @doc
-      .panel.panel-default
-        .panel-heading
-          %h1 Source Language: #{@src_lang}, Targets: #{@target_langs.join(',')}
-        .panel-body
+  .row
+    .container
+      %h2 Saved Memories:
+      %table.table.table-bordered#memories
+        %thead
+          %tr
+            %th Name
+            %th Uploaded
+            %th Source Lang
+            %th Target Lang(s)
+            %th TUs Found
+            %th
+            
+        %tbody
+          - @memory_index.each do |id, record|
+            %tr
+              %td= record[:id]
+              %td= record[:uploaded_at]
+              %td= record[:source_lang]
+              %td= record[:target_langs].join(",")
+              %td= record[:translation_unit_count]
+              %td
+                %a.btn.btn-success{:href => "/#{id}"} Load
+                %a.delete-memory.btn.btn-danger.pull-right{:href => "/delete/#{id}", :data => {:id => id}} Delete
+
+- if @tmx
+  .row
+    .panel.panel-default
+      .panel-heading
+        .container
+          %h1 Translation Memory: #{@record[:id]}
+          %h4 Source Language: #{@src_lang}, Targets: #{@target_langs.join(',')}
+      .panel-body
+        .container
+          %h4 Properties:
           %ul
-            - @headers.each do |prop|
-              %li #{prop["type"].split(":")[0].gsub("x-","")} : #{prop.text}
-        
+            - @properties.each do |k,v|
+              %li #{k} : #{v}
+      
+    .container
+      %h4 Segments:
       %table.table.table-bordered#segments
         %thead
           %tr
-            %th Source Text
+            %th Source Text (#{@src_lang})
             - @target_langs.each do |tl|
               %th= tl
               %th Created
               %th Changed
               %th Last Used
-              
             
+          
         %tbody
           - @tus.each do |tu|
             %tr
-              %td= tu.xpath("./tuv[@xml:lang='#{@src_lang}']/seg").first.text
+              %td
+                = tu.xpath("./tuv[@xml:lang='#{@src_lang}']/seg").first.text
               - @target_langs.each do |tl|
-                %td= tu.xpath("./tuv[@xml:lang='#{tl}']/seg").first.text
+                %td
+                  = tu.xpath("./tuv[@xml:lang='#{tl}']/seg").first.text
               %td= Date.parse(tu[:creationdate])
               %td= Date.parse(tu[:changedate])
               %td= Date.parse(tu[:lastusagedate])
